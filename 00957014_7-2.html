@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Local Storage</title>
+    <style type="text/CSS">
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            background-color: lightblue;
+            font-family: Perpetua;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+            padding: 4px;
+        }
+
+        th {
+            text-align: center;
+            color: white;
+            background-color: darkblue;
+        }
+
+        tr.oddrow {
+            background-color: white;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        // TODO
+        var input=document.getElementById("addButton");
+        var table="<table><thead><tr><th>Title</th><th>Author</th><th>Year</th><th>URL</th></tr></thead><tbody>";
+        var result="";
+        function start()
+        {
+            var check=localStorage.length;
+            result=table;
+            while(check>0)
+            {
+                check-=1;
+                var key = localStorage.key(check);
+                //console.log(key);
+                var ntou = key.startsWith("ntou");
+                if(ntou)
+                {
+                  objA=JSON.parse(localStorage.getItem(localStorage.key(check)));
+                  result += "<td>" + objA.title + "</td><td>" + objA.author + "</td><td>" + objA.year + "</td><td><a href = '" + objA.url + "' target = '_blank'>"+objA.url+"</a></td></tbody>";
+                }
+            }
+            var add=document.getElementById("addButton");
+            var rmv=document.getElementById("removeAllButton");
+            add.addEventListener("click",AddItem,false);
+            rmv.addEventListener("click",Remove,false);
+            document.getElementById("display").innerHTML=result;
+        }
+        function AddItem()
+        {
+            var title=document.getElementById("title");
+            var author=document.getElementById("author");
+            var year=document.getElementById("year");
+            var bookURL=document.getElementById("URL");
+            if(title.value=="" || author.value=="" || year.value=="" || bookURL.value=="")
+            {
+                start();
+                window.alert("Please input Complete Data!!");
+                return;
+            }
+            var objA={"title":title.value, "author":author.value, "year":year.value, "url":bookURL.value};
+            var JSONA=JSON.stringify(objA);
+            var Today=new Date();
+            var KEY="ntou-" + Today.getTime();
+            localStorage.setItem(KEY,JSONA);
+            result += "<td>" + objA.title + "</td><td>" + objA.author + "</td><td>" + objA.year + "</td><td><a href = '" + objA.url + "' target = '_blank'>"+objA.url+"</a></td></tbody>";
+            document.getElementById("display").innerHTML = result;
+        }
+        function Remove()
+        {
+            result="";
+            var len=localStorage.length;
+            while(len>0)
+            {
+                len-=1;
+                var key = localStorage.key(len);
+                console.log(key);
+                var check = key.startsWith("ntou");
+                if(check)
+                {
+                  localStorage.removeItem(localStorage.key(len));
+                }
+            }
+            document.getElementById("display").innerHTML=result;
+            start();
+            window.alert("All items were removed!");
+        }
+        window.addEventListener("load",start,false);
+
+
+
+
+    </script>
+</head>
+
+<body>
+    <form action="#">
+        <p>
+            <label>Book Title:<input type="text" id="title"></label>
+            <label>Author(s):<input type="text" id="author"></label>
+            <label>Year:<input type="number" id="year"></label>
+            <label>Book URL:<input type="URL" id="URL"></label>
+        </p>
+        <p>
+            <input type="button" value="Add New Item" id="addButton">
+            <input type="button" value="Remove All Items" id="removeAllButton">
+        </p>
+    </form>
+    <hr>
+    <div id="display">
+    </div>
+</body>
+
+</html>
